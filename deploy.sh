@@ -10,7 +10,7 @@ cd dist
 # echo 'www.example.com' > CNAME
 
 git init
-git checkout -b gh-pages
+# git checkout -b gh-pages
 git add -A
 git commit -m 'deploy'
 
@@ -18,6 +18,6 @@ git commit -m 'deploy'
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git main:gh-pages
 
 # 如果你要部署在 https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:fieemiracle/model-system.git main:gh-pages
+git push -f https://github.com/fieemiracle/model-system.git main:gh-pages
 
 cd -

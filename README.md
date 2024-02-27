@@ -30,3 +30,4 @@
 
 ## 部署线上地址
   personal access token: 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
+  https://fieemiracle.github.io/model-system/
