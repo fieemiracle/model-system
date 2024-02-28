@@ -9,13 +9,14 @@
   --theme-background: #2f2f2f;
   --theme-list-item-bgColor: #676767;
   --theme-dialogue-bgColor: #2f2f2f;
-
+  --theme-border-color: '';
 }
 .light{
   --theme-color: #1f2937;
   --theme-background: #fff;
   --theme-list-item-bgColor: #e5e7eb;
   --theme-dialogue-bgColor: #fff;
+  --theme-border-color: #fff;
 }
 
 .app-wrapper {
@@ -23,10 +24,18 @@
   flex-direction: column;
   gap: 100px;
   background-color: var(--theme-background);
+  position: relative;
 
   .app-content {
     display: flex;
     gap: 20px;
+  }
+
+  .tools-wrap {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 

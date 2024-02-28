@@ -1,45 +1,51 @@
 import { ReactNode, createContext, useState } from 'react'
-import { DialogueI } from '../service/types'
+import { ListI } from '../service/types'
 
 type ContextProviderProps = {
   children: ReactNode
 }
 
 type ContextControllerProps = {
-  history: DialogueI[],
-  setHistory: (history: DialogueI[]) => void
   isRendering: boolean,
   setIsRendering: (rendering: boolean) => void
   showSider: boolean
   setShowSider: (rendering: boolean) => void
   dark: boolean
   setDark: (rendering: boolean) => void
+  list: ListI[]
+  setList: (list: ListI[]) => void
+  lidx: number
+  setLidx: (lidx: number) => void
 }
 export const ConfigControllerContext = createContext<ContextControllerProps | null>({
-  history: [],
-  setHistory: () => {},
   isRendering: false,
   setIsRendering: () => {},
   showSider: true,
   setShowSider: () => {},
   dark: false,
-  setDark: () => {}
+  setDark: () => {},
+  list: [],
+  setList: () => {},
+  lidx: -1,
+  setLidx: () => {}
 })
 
 
 export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
-  const [history, setHistory] = useState<DialogueI[]>([])
   const [isRendering, setIsRendering] = useState(false)
   const [showSider, setShowSider] = useState(true)
   const [dark, setDark] = useState(false)
+  const [list, setList] = useState<ListI[]>([])
+  const [lidx, setLidx] = useState(-1)
 
   return (
     <ConfigControllerContext.Provider
       value={{
-        history, setHistory,
         isRendering, setIsRendering,
         showSider, setShowSider,
-        dark, setDark
+        dark, setDark,
+        list, setList,
+        lidx, setLidx
       }}
     >
       {children}

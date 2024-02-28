@@ -5,6 +5,7 @@ import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
 import ImgCrop from 'antd-img-crop'
 import CollapseWrap from '../../components/Collapse'
 import { useConfig } from '../../context/hooks/useConfig'
+import { useTranslation } from 'react-i18next'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 type InfoI = {
@@ -28,7 +29,8 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const [previewImage, setPreviewImage] = useState('')
     const [previewTitle, setPreviewTitle] = useState('')
     const [fileList, setFileList] = useState<UploadFile<InfoI>[]>([])
-    const { showSider, dark, setDark } = useConfig()
+    const { showSider, dark, setDark, list, setList, lidx, setLidx } = useConfig()
+    const { t } = useTranslation()
 
     useEffect(() => {
       props.switchTheme(dark)
@@ -36,7 +38,6 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const handleCancel = () => setPreviewOpen(false)
 
     const handlePreview = async (file: UploadFile) => {
-      console.log(file)
       let src = file.thumbUrl as string
       if (!src) {
         src = await new Promise((resolve) => {
@@ -62,7 +63,19 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
         <PlusOutlined style={{ color: dark ? '#fff' : '#1f2937' }}/>
       </button>
     )
-
+    
+    const newChat = () => {
+      const updateList = [
+        {
+          name: `New Chat`,
+          date: `${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+          history: []
+        },
+        ...list
+      ]
+      setLidx(0)
+      setList(updateList)
+    }
   return (
     <>
       <div className={`sider-wrap ${dark ? 'dark' : 'light'}`} style={{ background: dark ? '#2f2f2f' : '#fff' }}>
@@ -73,35 +86,27 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
               <div className='name'>Robot System</div>
             </div>
             <div className='theme-wrap'>
-              <Switch checkedChildren="白天" unCheckedChildren="黑夜" defaultChecked onClick={(checked) => setDark(!checked)}/>
+              <Switch checkedChildren={ t('light') } unCheckedChildren={ t('night') } defaultChecked onClick={(checked) => setDark(!checked)}/>
             </div>
           </div>
           <div className="list-container">
             <div className='new-wrap'>
-              <div className='new'>新建聊天框</div>
+              <div className='new'>{ t('new') }</div>
               <div className='btn'>
-                <Button type="primary" icon={<PlusOutlined />} size='small'></Button>
+                <Button type="primary" icon={<PlusOutlined />} size='small' onClick={newChat}></Button>
               </div>
             </div>
             <div className='list-wrap'>
-              <div className='list-item'>
-                <div className='file-name'>File Chat</div>
-                <div className='more'>
-                  <EllipsisOutlined />
-                </div>
-              </div>
-              <div className='list-item'>
-                <div className='file-name'>File Chat</div>
-                <div className='more'>
-                  <EllipsisOutlined />
-                </div>
-              </div>
-              <div className='list-item'>
-                <div className='file-name'>File Chat</div>
-                <div className='more'>
-                  <EllipsisOutlined />
-                </div>
-              </div>
+              {
+                list.map((_litem, _lindex) => (
+                  <div className='list-item' key={_lindex} onClick={() => setLidx(_lindex)} style={{ background: _lindex === lidx ? '#e5e7eb' : '#fff' }}>
+                    <div className='file-name'>{ _litem.name }</div>
+                    <div className='more' style={{ borderLeft: _lindex === lidx ? '1px solid #fff' : '1px solid #e5e7eb'}}>
+                      <EllipsisOutlined />
+                    </div>
+                  </div>
+                ))
+              }
             </div>
           </div>
           <div className="user-wrap">
@@ -124,7 +129,7 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
               </Modal>
             </div>
             <div className='username'>User</div>
-            <div className='logout'>退出</div>
+            <div className='logout'>{ t('exit') }</div>
           </div>
         </div>
         <div className='tool' style={{ marginLeft: !showSider ? '6px' : '3px' }}>

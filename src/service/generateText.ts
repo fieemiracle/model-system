@@ -4,6 +4,7 @@ import { DialogueI } from "./types"
 type ReqActionParamsT = {
   history: DialogueI[], // 历史对话pair
   input: string, // 用户当前输入的内容
+  lang: 'zh' | 'en'
 }
 type ResStatesResultT = {
   errno: number
@@ -31,7 +32,7 @@ export default async function generateText (params: ReqActionParamsT): Promise<R
       // }
 
       // mock
-      const mockData = generate()
+      const mockData = generate(params.lang)
       return new Promise(resolve => {
         setTimeout(() => {
           resolve({

@@ -3,6 +3,7 @@ import { AntDesignOutlined } from '@ant-design/icons'
 import './style.less'
 import Spinner from '../Spinner'
 import { memo, useEffect, useRef, useState } from 'react'
+import { useConfig } from '../../context/hooks/useConfig'
 
 type PropsI = {
   output: string
@@ -13,22 +14,25 @@ type PropsI = {
 const OutputCotainer = memo(function OutputCotainer(props: PropsI) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const { setIsRendering } = useConfig()
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         if (prevIndex + 1 >= props.output.length) {
           clearInterval(intervalId)
+          setIsRendering(false)
           return prevIndex + 1
         }
+        setIsRendering(true)
         return prevIndex + 1
       })
 
       return () => clearInterval(intervalId)
-    }, 100) // 调整更新间隔时间
+    }, 50) // 调整更新间隔时间
 
     return () => clearInterval(intervalId)
-  }, [props.output])
+  }, [props.output, setIsRendering])
 
   useEffect(() => {
     if (props.parentDOm.current) {
@@ -55,7 +59,7 @@ const OutputCotainer = memo(function OutputCotainer(props: PropsI) {
             <div className='output-content' ref={containerRef}>
               {
                 new Array(props.output.length).fill(0).map((_item, index) => (
-                  <div className='output' style={{ whiteSpace: 'pre-wrap', width: 'fit-content' }}>{ index <= currentIndex && props.output[index] }</div>
+                  <div key={index} className='output' style={{ whiteSpace: 'pre-wrap', width: 'fit-content' }}>{ index <= currentIndex && props.output[index] }</div>
                 ))
               }
             </div>

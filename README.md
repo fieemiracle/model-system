@@ -1,5 +1,5 @@
 ## 技术栈
-  React + TypeScript + Vite
+  React + TypeScript + Vite + react-i18next
 
 ## UI库
   Ant-Design
@@ -31,3 +31,4 @@
 ## 部署线上地址
   personal access token: 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
   https://fieemiracle.github.io/model-system/
+  git remote set-url origin git@github.com:fieemiracle/model-system.git
