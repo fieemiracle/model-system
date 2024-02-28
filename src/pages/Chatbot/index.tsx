@@ -14,6 +14,7 @@ const ChatbotPage = memo(function ChatbotPage() {
   const [historyCache, setHistoryCache] = useState<DialogueI[]>([])
   const chatbotContentWrapRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
+  const { dark } = useConfig()
 
   useEffect(() => {
     setHistoryCache(history)
@@ -72,7 +73,7 @@ const ChatbotPage = memo(function ChatbotPage() {
       <div className='chatbot-wrapper'>
         {
           history.length ? (
-          <div className='chatbot-content-wrap' ref={chatbotContentWrapRef} style={{ border: isRendering || loading ? '1px solid #1677FF' : '1px solid #e5e7eb' }}>
+          <div className={`chatbot-content-wrap ${ dark ? 'dark' : 'light' }`} ref={chatbotContentWrapRef} style={{ border: isRendering || loading ? '1px solid #1677FF' : '1px solid #e5e7eb' }}>
             { 
               history.map((pair: DialogueI, pidx: number) => (
                 <div className='chatbot-pairs-wrap' key={pidx}>
@@ -90,7 +91,7 @@ const ChatbotPage = memo(function ChatbotPage() {
               ))
             }
           </div>) : (
-            <div className='chatbot-content-wrap' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div className={`chatbot-content-wrap ${ dark ? 'dark' : 'light' }`} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Empty description={false} />
             </div>
           )
@@ -101,7 +102,7 @@ const ChatbotPage = memo(function ChatbotPage() {
               placeholder="input here"
               className="chatbot-text"
               value={promt}
-              style={{ minHeight: 40, maxHeight: 280 }}
+              style={{ minHeight: 40, maxHeight: 280, background: dark ? '#676767' : '#fff'}}
               onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPromt(e.target.value)}
             />
             <div className='btn-wrapper'>

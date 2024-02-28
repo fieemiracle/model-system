@@ -1,8 +1,10 @@
 import { Button, GetProp, Modal, Switch, Upload, UploadFile, UploadProps } from 'antd'
 import './style.less'
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
 import ImgCrop from 'antd-img-crop'
+import CollapseWrap from '../../components/Collapse'
+import { useConfig } from '../../context/hooks/useConfig'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 type InfoI = {
@@ -21,13 +23,16 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error)
   })
   
-function Sider () {
+function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const [previewOpen, setPreviewOpen] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
     const [previewTitle, setPreviewTitle] = useState('')
     const [fileList, setFileList] = useState<UploadFile<InfoI>[]>([])
-    const sliderWrapRef = useRef<HTMLDivElement>(null)
+    const { showSider, dark, setDark } = useConfig()
 
+    useEffect(() => {
+      props.switchTheme(dark)
+    }, [dark, props])
     const handleCancel = () => setPreviewOpen(false)
 
     const handlePreview = async (file: UploadFile) => {
@@ -54,21 +59,21 @@ function Sider () {
 
     const uploadButton = (
       <button style={{ border: 0, background: 'none' }} type="button">
-        <PlusOutlined />
+        <PlusOutlined style={{ color: dark ? '#fff' : '#1f2937' }}/>
       </button>
     )
 
   return (
     <>
-      <div className="sider-wrap" ref={sliderWrapRef}>
-        <div className='main'>
+      <div className={`sider-wrap ${dark ? 'dark' : 'light'}`} style={{ background: dark ? '#2f2f2f' : '#fff' }}>
+        <div className='main' style={{ display: showSider ? 'flex' : 'none', transition: 'all 3s' }}>
           <div className="title-wrap">
             <div className='logo-wrap'>
               <div className='logo'><i className='iconfont icon-zhinengxuexipingtai'></i></div>
               <div className='name'>Robot System</div>
             </div>
             <div className='theme-wrap'>
-              <Switch checkedChildren="白天" unCheckedChildren="黑夜" defaultChecked />
+              <Switch checkedChildren="白天" unCheckedChildren="黑夜" defaultChecked onClick={(checked) => setDark(!checked)}/>
             </div>
           </div>
           <div className="list-container">
@@ -122,8 +127,8 @@ function Sider () {
             <div className='logout'>退出</div>
           </div>
         </div>
-        <div className='tool'>
-          <div className='line'></div>
+        <div className='tool' style={{ marginLeft: !showSider ? '6px' : '3px' }}>
+          <CollapseWrap></CollapseWrap>
         </div>
       </div>
     </>

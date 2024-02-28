@@ -4,13 +4,29 @@
   max-width: 100vw;
 }
 
+.dark{
+  --theme-color: #fff;
+  --theme-background: #2f2f2f;
+  --theme-list-item-bgColor: #676767;
+  --theme-dialogue-bgColor: #2f2f2f;
+
+}
+.light{
+  --theme-color: #1f2937;
+  --theme-background: #fff;
+  --theme-list-item-bgColor: #e5e7eb;
+  --theme-dialogue-bgColor: #fff;
+}
+
 .app-wrapper {
   display: flex;
   flex-direction: column;
   gap: 100px;
+  background-color: var(--theme-background);
 
   .app-content {
     display: flex;
     gap: 20px;
   }
 }
+
