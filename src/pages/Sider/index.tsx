@@ -1,11 +1,12 @@
-import { Button, GetProp, Modal, Switch, Upload, UploadFile, UploadProps } from 'antd'
+import { Button, GetProp, Modal, Popover, Switch, Upload, UploadFile, UploadProps } from 'antd'
 import './style.less'
 import { useEffect, useState } from 'react'
-import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
+import { PlusOutlined, EllipsisOutlined, DownloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import ImgCrop from 'antd-img-crop'
 import CollapseWrap from '../../components/Collapse'
 import { useConfig } from '../../context/hooks/useConfig'
 import { useTranslation } from 'react-i18next'
+import TextArea from 'antd/es/input/TextArea'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 type InfoI = {
@@ -31,6 +32,7 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const [fileList, setFileList] = useState<UploadFile<InfoI>[]>([])
     const { showSider, dark, setDark, list, setList, lidx, setLidx } = useConfig()
     const { t } = useTranslation()
+    const [editable, setEditable] = useState(false)
 
     useEffect(() => {
       props.switchTheme(dark)
@@ -57,12 +59,6 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
     }
 
     const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setFileList(newFileList)
-
-    const uploadButton = (
-      <button style={{ border: 0, background: 'none' }} type="button">
-        <PlusOutlined style={{ color: dark ? '#fff' : '#1f2937' }}/>
-      </button>
-    )
     
     const newChat = () => {
       const updateList = [
@@ -76,6 +72,24 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
       setLidx(0)
       setList(updateList)
     }
+    
+    const onDelete = (_lindex: number) => {
+      const updateList = [
+        ...list.slice(0, _lindex),
+        ...list.slice(_lindex + 1)
+      ]
+      setList(updateList)
+    }
+    const onDownload = (_lindex: number) => {
+      const listItem = list[_lindex]
+      console.log(listItem)
+    }
+
+    const uploadButton = (
+      <button style={{ border: 0, background: 'none' }} type="button">
+        <PlusOutlined style={{ color: dark ? '#fff' : '#1f2937' }}/>
+      </button>
+    )
   return (
     <>
       <div className={`sider-wrap ${dark ? 'dark' : 'light'}`} style={{ background: dark ? '#2f2f2f' : '#fff' }}>
@@ -100,9 +114,42 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
               {
                 list.map((_litem, _lindex) => (
                   <div className='list-item' key={_lindex} onClick={() => setLidx(_lindex)} style={{ background: _lindex === lidx ? '#e5e7eb' : '#fff' }}>
-                    <div className='file-name'>{ _litem.name }</div>
+                    {
+                      editable ? (
+                        <TextArea
+                          placeholder='input here'
+                          value={_litem.name}
+                          allowClear
+                          autoSize={{ minRows: 1, maxRows: 3 }}
+                          style={{ background: dark ? '#676767' : '#fff', color: '12px'}}
+                          onChange={(e) => {
+                            const updateList = [
+                              ...list.slice(0, _lindex),
+                              {
+                                ...(list[_lindex]),
+                                name: e.target.value
+                              },
+                              ...list.slice(_lindex + 1)
+                            ]
+                            setList(updateList)
+                          }}
+                          onBlur={() => setEditable(false)}/>
+                      ) :  (<div className='file-name'>{ _litem.name }</div>)
+                    }
                     <div className='more' style={{ borderLeft: _lindex === lidx ? '1px solid #fff' : '1px solid #e5e7eb'}}>
-                      <EllipsisOutlined />
+                      <Popover
+                        placement="right"
+                        content={
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: 'fit-content' }}>
+                            <Button icon={<EditOutlined />} onClick={() => setEditable(true)}>{ t('rename') }</Button>
+                            <Button icon={<DeleteOutlined />} onClick={() => onDelete(_lindex)}>{ t('delete') }</Button>
+                            <Button icon={<DownloadOutlined />} onClick={() => onDownload(_lindex)}>{ t('download') }</Button>
+                          </div>
+                        }
+                        trigger="click"
+                      >
+                        <EllipsisOutlined />
+                      </Popover>
                     </div>
                   </div>
                 ))

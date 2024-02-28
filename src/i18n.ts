@@ -10,6 +10,11 @@ const resources = {
       'exit': 'Exit',
       'light': 'light',
       'night': 'dark',
+      'download': 'Download',
+      'rename': 'Rename',
+      'delete': 'Delete',
+      'voice': 'Speech To Text',
+      'pause': 'Pause Speech Recognition'
     }
   },
   zh: {
@@ -20,6 +25,11 @@ const resources = {
       'exit': '退出',
       'light': '常规',
       'night': '暗黑',
+      'download': '下载',
+      'rename': '重命名',
+      'delete': '移除',
+      'voice': '语音转文字',
+      'pause': '暂停语音识别'
     }
   }
 }

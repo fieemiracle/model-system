@@ -28,6 +28,10 @@
   git commit -m "Initial commit"
   git push -u origin master
 
+  git config --list 查看Git配置信息
+  /usr/bin/git config --global user.name <username>                                      
+  /usr/bin/git config --global user.email <email>
+
 ## 部署线上地址
   personal access token: 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
   https://fieemiracle.github.io/model-system/

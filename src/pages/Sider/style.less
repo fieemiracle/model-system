@@ -3,6 +3,7 @@
   width: 300px;
   height: 99vh;
   align-items: center;
+  min-width: 300px;
 
   .main {
     flex: 1;
@@ -101,9 +102,17 @@
             background-color: var(--theme-list-item-bgColor);
           }
           .file-name {
+            flex: 1;
             color: var(--theme-color);
             font-size: 12px;
             margin-left: 10px;
+            text-align: left;
+            overflow: hidden;
+            // display: -webkit-box;
+            // -webkit-line-clamp: 3;
+            // -webkit-box-orient: vertical;
+            // overflow: hidden;
+            // white-space: wrap;
           }
           .more {
             width: 40px;
