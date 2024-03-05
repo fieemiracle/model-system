@@ -2,7 +2,7 @@
   React + TypeScript + Vite + react-i18next
 
 ## UI库
-  Ant-Design
+  Ant-Design  react-router-dom react-speech-recognition  mockjs
 
 ## 后端技术
   Nodejs & mockjs

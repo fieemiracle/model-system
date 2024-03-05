@@ -7,18 +7,18 @@ import { Button, Empty, message } from 'antd'
 import { memo, useEffect, useRef, useState } from 'react'
 import { useConfig } from '../../context/hooks/useConfig'
 import generateText from '../../service/generateText'
-import { DialogueI } from '../../service/types'
+import { DialogueI } from '../../types'
 import { useTranslation } from 'react-i18next'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
-const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
+const ChatbotPage = memo(function ChatbotPage() {
   const [promt, setPromt] = useState('')
   const [placeholder, setPlaceholder] = useState('input here...')
   const { isRendering, setIsRendering, list, setList, lidx, setLidx } = useConfig()
   const chatbotContentWrapRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(false)
   const { dark } = useConfig()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [listen, setListen] = useState(false)
   const [messageApi, contextHolder] = message.useMessage()
   const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition()
@@ -62,7 +62,7 @@ const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
       const params = {
         history: [], // 历史对话pair
         input: promt, // 用户当前输入的内容
-        lang: props.lang
+        lang: i18n.language
       }
       const data = await generateText(params)
       setLoading(false)
@@ -107,7 +107,7 @@ const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
       const params = {
         history, // 历史对话pair
         input: promt, // 用户当前输入的内容
-        lang: props.lang
+        lang: i18n.language
       }
       const data = await generateText(params)
       setLoading(false)
@@ -135,7 +135,6 @@ const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
 
   // 语音识别按钮
   const onRecognise = () => {
-    console.log('listening', listening)
     if (!browserSupportsSpeechRecognition) {
       return (
         <>
@@ -149,14 +148,18 @@ const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
         </>
       )
     }
-    setListen(!listen)
-    if (listen) {
-      SpeechRecognition.startListening
-      setPlaceholder('正在进行语音识别...')
-    } else {
-      SpeechRecognition.stopListening
-      setPlaceholder('语音识别暂停中...')
-    }
+    setListen((_listen) => {
+      if (!_listen) {
+        console.log('listening', listening, listen)
+        SpeechRecognition.startListening()
+        setPlaceholder('正在进行语音识别...')
+        return true
+      } else {
+        SpeechRecognition.stopListening()
+        setPlaceholder('语音识别结束...')
+        return false
+      }
+    })
   }
 
   const clearHistory = () => {
@@ -172,6 +175,7 @@ const ChatbotPage = memo(function ChatbotPage(props: { lang: 'zh' | 'en' }) {
     ]
     setList(updateList)
     resetTranscript()
+    setListen(false)
   }
 
   return (

@@ -13,14 +13,21 @@
     "@babel/runtime": "^7.23.9",
     "antd": "^5.13.3",
     "antd-img-crop": "^4.21.0",
+    "antd-style": "^3.6.1",
     "core-js": "^3.36.0",
+    "dayjs": "^1.11.10",
     "i18next": "^23.10.0",
+    "localforage": "^1.10.0",
+    "lunar-typescript": "^1.7.4",
+    "match-sorter": "^6.3.4",
     "mockjs": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^14.0.5",
+    "react-router-dom": "^6.22.2",
     "react-speech-recognition": "^3.10.0",
-    "regenerator-runtime": "^0.14.1"
+    "regenerator-runtime": "^0.14.1",
+    "sort-by": "^1.2.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.23.9",

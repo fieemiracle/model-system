@@ -1,0 +1,43 @@
+.calendar-wrap {
+  height: 99vh;
+  width: 70%;
+  box-sizing: border-box;
+  min-width: 775px;
+  background-color: var(--theme-list-item-bgColor);
+
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .footer-wrap {
+    flex: 1;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .todos-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      .todo {
+        // width: 100%;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        box-sizing: border-box;
+        color: #5c6b77;
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(5, 5, 5, 0.06);
+
+        .title {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

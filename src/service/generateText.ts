@@ -1,10 +1,10 @@
+import { DialogueI } from "../types"
 import { generate } from "./mock/generate"
-import { DialogueI } from "./types"
 
 type ReqActionParamsT = {
   history: DialogueI[], // 历史对话pair
   input: string, // 用户当前输入的内容
-  lang: 'zh' | 'en'
+  lang: string
 }
 type ResStatesResultT = {
   errno: number

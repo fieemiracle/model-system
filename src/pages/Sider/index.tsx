@@ -1,4 +1,4 @@
-import { Button, GetProp, Modal, Popover, Switch, Upload, UploadFile, UploadProps } from 'antd'
+import { Button, GetProp, Menu, MenuProps, Modal, Popover, Switch, Upload, UploadFile, UploadProps } from 'antd'
 import './style.less'
 import { useEffect, useState } from 'react'
 import { PlusOutlined, EllipsisOutlined, DownloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -7,8 +7,11 @@ import CollapseWrap from '../../components/Collapse'
 import { useConfig } from '../../context/hooks/useConfig'
 import { useTranslation } from 'react-i18next'
 import TextArea from 'antd/es/input/TextArea'
+import { useLocation, useNavigate } from 'react-router-dom'
+import dayjs from 'dayjs'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
+
 type InfoI = {
   uid: string
   name: string
@@ -16,15 +19,33 @@ type InfoI = {
   status: string
   thumbUrl: string
 }
+type MenuItem = Required<MenuProps>['items'][number]
 
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: 'group',
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  } as MenuItem
+}
+
+const getBase64 = (file: FileType): Promise<string> => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => resolve(reader.result as string)
     reader.onerror = (error) => reject(error)
   })
-  
+}
+
 function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const [previewOpen, setPreviewOpen] = useState(false)
     const [previewImage, setPreviewImage] = useState('')
@@ -33,10 +54,33 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
     const { showSider, dark, setDark, list, setList, lidx, setLidx } = useConfig()
     const { t } = useTranslation()
     const [editable, setEditable] = useState(false)
+    const items: MenuItem[] = [
+      getItem(t('chat'), '/chat', <i className='iconfont icon-duihua' style={{ fontSize: '20px' }}></i>),
+      getItem(t('calendar'), '/calendar', <i className={`iconfont icon-rili-${ dayjs().date() }`} style={{ fontSize: '20px' }}></i>),
+      getItem(t('note'), '/note', <i className='iconfont icon-youliaobiji' style={{ fontSize: '20px' }}></i>),
+      getItem(t('todo'), '/todo', <i className='iconfont icon-daibanshixiang' style={{ fontSize: '20px' }}></i>),
+      getItem(t('timeline'), '/timeline', <i className='iconfont icon-timeline' style={{ fontSize: '20px' }}></i>),
+      getItem(t('link'), '/link', <i className='iconfont icon-link' style={{ fontSize: '20px' }}></i>),
+      getItem(t('knowledge'), '/knowledge', <i className='iconfont icon-zhishiku' style={{ fontSize: '20px' }}></i>),
+      getItem(t('feedback'), '/feedback', <i className='iconfont icon-wentifankui' style={{ fontSize: '20px' }}></i>),
+      getItem(t('user'), '/user', <i className='iconfont icon-user' style={{ fontSize: '20px' }}></i>, [
+        getItem(t('login'), '/login', <i className='iconfont icon-login' style={{ fontSize: '20px' }}></i>),
+        getItem(t('sign'), '/sign', <i className='iconfont icon-zhuce' style={{ fontSize: '20px' }}></i>),
+        getItem(t('privacy'), '/privacy', <i className='iconfont icon-gerenziliao' style={{ fontSize: '20px' }}></i>)
+      ]),
+      getItem(t('set'), '/set', <i className='iconfont icon-shezhi' style={{ fontSize: '20px' }}></i>, [
+        getItem(t('destory'), '/destory', <i className='iconfont icon-zhuxiao' style={{ fontSize: '20px' }}></i>)
+      ]),
+      getItem(t('recycle'), '/recycle', <i className='iconfont icon-huishouzhan' style={{ fontSize: '20px' }}></i>),
+      getItem(t('tour'), '/tour', <i className='iconfont icon-zhuizongsuyuan' style={{ fontSize: '20px' }}></i>)
+    ]
+    const navigate = useNavigate()
+    const location = useLocation()
 
     useEffect(() => {
       props.switchTheme(dark)
     }, [dark, props])
+    
     const handleCancel = () => setPreviewOpen(false)
 
     const handlePreview = async (file: UploadFile) => {
@@ -93,7 +137,7 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
   return (
     <>
       <div className={`sider-wrap ${dark ? 'dark' : 'light'}`} style={{ background: dark ? '#2f2f2f' : '#fff' }}>
-        <div className='main' style={{ display: showSider ? 'flex' : 'none', transition: 'all 3s' }}>
+        <div className='main' style={{ display: showSider ? 'flex' : 'none' }}>
           <div className="title-wrap">
             <div className='logo-wrap'>
               <div className='logo'><i className='iconfont icon-zhinengxuexipingtai'></i></div>
@@ -180,6 +224,18 @@ function Sider (props: { switchTheme: (dark: boolean) => void }) {
           </div>
         </div>
         <div className='tool' style={{ marginLeft: !showSider ? '6px' : '3px' }}>
+          <div className='navibar-wrap'>
+            <Menu
+              defaultSelectedKeys={['/chat']}
+              selectedKeys={[location.pathname]}
+              mode="inline"
+              theme={dark ? 'dark' : 'light'}
+              inlineCollapsed={true}
+              items={items}
+              style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              onSelect={({ key }) => navigate(key)}
+            />
+          </div>
           <CollapseWrap></CollapseWrap>
         </div>
       </div>
