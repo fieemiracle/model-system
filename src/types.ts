@@ -12,21 +12,21 @@ export interface ListI {
   history: DialogueI[]
 }
 
-export type Label = 'username' | 'email' | 'phone' | 'gender' | 'password' | 'captcha' | 'avatar' | 'repassword' | 'birth'
-export type Type = 'input' | 'password' | 'select' | 'phone' | 'captcha' | 'email' | 'number' | 'upload'
+export type Label = 'username' | 'email' | 'phone' | 'gender' | 'password' | 'captcha' | 'avatar' | 'repassword' | 'birth' | 'status'
+export type Type = 'input' | 'password' | 'select' | 'phone' | 'captcha' | 'email' | 'number' | 'upload' | 'status'
 
 export type FormI = {
+  type: Type
   key: Label,
   label: string
-  placeholder: string
   show: boolean
   value: string
   rules?: Rule[]
-  type?: Type
   tooltip?: string
   prefix?: ReactNode
   addonBefore?: ReactNode
   dependencies?: string[]
   hasFeedback?: boolean
   extra?: string
+  placeholder?: string
 }

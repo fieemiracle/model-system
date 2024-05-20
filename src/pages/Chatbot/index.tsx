@@ -31,8 +31,9 @@ const ChatbotPage = memo(function ChatbotPage() {
   }, [list])
 
   useEffect(() => {
+    console.log(transcript, 'promt=====================', listening, listen)
     setPromt(transcript)
-  }, [transcript])
+  }, [transcript, listen, listening])
 
   const fetchResponse = async () => {
     if (!promt) {
@@ -148,18 +149,29 @@ const ChatbotPage = memo(function ChatbotPage() {
         </>
       )
     }
-    setListen((_listen) => {
-      if (!_listen) {
-        console.log('listening', listening, listen)
-        SpeechRecognition.startListening()
-        setPlaceholder('正在进行语音识别...')
-        return true
-      } else {
-        SpeechRecognition.stopListening()
-        setPlaceholder('语音识别结束...')
-        return false
-      }
-    })
+
+    if (!listen) {
+      console.log('listening', listening, listen)
+      SpeechRecognition.startListening()
+      setPlaceholder('正在进行语音识别...')
+      setListen(true)
+    } else {
+          SpeechRecognition.stopListening()
+          setPlaceholder('语音识别结束...')
+          setListen(false)
+    }
+    // setListen((_listen) => {
+    //   if (!_listen) {
+    //     console.log('listening', listening, listen)
+    //     SpeechRecognition.startListening()
+    //     setPlaceholder('正在进行语音识别...')
+    //     return true
+    //   } else {
+    //     SpeechRecognition.stopListening()
+    //     setPlaceholder('语音识别结束...')
+    //     return false
+    //   }
+    // })
   }
 
   const clearHistory = () => {

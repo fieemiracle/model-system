@@ -35,7 +35,7 @@ export default function LoginPage () {
             {...formItemLayout}
           >
             {
-              form.filter((_form) => !['gender', 'avatar', 'repassword'].includes(_form.label)).map((formitem, fidx) => (
+              form.slice(0, -1).filter((_form) => ![t('gender'), t('avatar'), t('repassword'), ('status')].includes(_form.label)).map((formitem, fidx) => (
                 formitem.show ? (
                   <Form.Item
                     key={`login-form-${formitem.label}`}

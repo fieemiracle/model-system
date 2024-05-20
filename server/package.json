@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "This is my Back-End framework.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "egg-bin dev"
+  },
+  "author": "chenyuhua",
+  "license": "ISC",
+  "dependencies": {
+    "datetime": "^0.0.3",
+    "egg": "^3.23.0",
+    "egg-mongoose": "^4.0.1",
+    "egg-view-nunjucks": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
+    "uuidv1": "^1.6.14"
+  },
+  "devDependencies": {
+    "egg-bin": "^6.9.0"
+  }
+}

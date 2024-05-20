@@ -13,3 +13,10 @@ export function generateColor (opacity: number) {
   const type = opacity > 0.5 ? 0 : 1
   return colors[type]
 }
+
+export function getFormValue(form: { key: string }[], key: string) {
+  const formitem = form.filter((_form) => _form.key === key)[0]
+  // console.log(form, formitem);
+  
+  return formitem.value
+}

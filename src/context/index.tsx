@@ -26,19 +26,19 @@ type ContextControllerProps = {
 }
 export const ConfigControllerContext = createContext<ContextControllerProps | null>({
   isRendering: false,
-  setIsRendering: () => {},
+  setIsRendering: () => { },
   showSider: true,
-  setShowSider: () => {},
+  setShowSider: () => { },
   dark: false,
-  setDark: () => {},
+  setDark: () => { },
   list: [],
-  setList: () => {},
+  setList: () => { },
   lidx: -1,
-  setLidx: () => {},
+  setLidx: () => { },
   todolist: [],
-  setTodolist: () => {},
+  setTodolist: () => { },
   form: [],
-  setForm: () => {}
+  setForm: () => { }
 })
 
 export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
@@ -49,6 +49,7 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
   const [lidx, setLidx] = useState(-1)
   const [todolist, setTodolist] = useState<TodoI[]>([])
   const { t } = useTranslation()
+
   const [form, setForm] = useState<FormI[]>([{
     type: 'input',
     label: t('username'),
@@ -56,7 +57,7 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     placeholder: 'Please input your username!',
     show: true,
     value: '',
-    rules: [{ required: true, message: 'username is nessesary!!!' }],
+    rules: [{ required: false, message: 'username is nessesary!!!' }],
     tooltip: 'What do you want others to call you?',
     prefix: (<UserOutlined className='site-form-item-icon' />)
   }, {
@@ -80,15 +81,16 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     value: '',
     rules: [{
       required: true,
-      message: 'repassword is nessesary!!!' },
-      ({ getFieldValue }) => ({
-        validator(_, value) {
-          if (!value || getFieldValue('password') === value) {
-            return Promise.resolve()
-          }
-          return Promise.reject(new Error('The new password that you entered do not match!'))
+      message: 'repassword is nessesary!!!'
+    },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        if (!value || getFieldValue('password') === value) {
+          return Promise.resolve()
         }
+        return Promise.reject(new Error('The new password that you entered do not match!'))
       }
+    }
     )],
     tooltip: 'What do you want others to call you?',
     prefix: (<LockOutlined className='site-form-item-icon' />)
@@ -125,7 +127,7 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     label: t('gender'),
     key: 'gender',
     placeholder: 'Please input your gender!',
-    show: true,
+    show: false,
     value: ''
   }, {
     type: 'upload',
@@ -134,6 +136,14 @@ export const ContextProvider: React.FC<ContextProviderProps> = ({ children }) =>
     placeholder: 'Please input your age!',
     show: true,
     value: ''
+  }, {
+    type: 'status',
+    label: t('status'),
+    key: 'status',
+    placeholder: 'Please input your status!',
+    show: true,
+    value: t('userRole'),
+    rules: [{ required: true, message: 'status is nessesary!!!' }]
   }])
 
   return (

@@ -1,9 +1,14 @@
-import { Button, Col, Form, GetProp, Input, Row, Select, Upload, UploadProps, message } from 'antd'
+import { Button, Col, Form, GetProp, Input, Row, Select, Upload, UploadProps, message, Radio } from 'antd'
+import type { RadioChangeEvent } from 'antd'
 import './style.less'
 import { useConfig } from '../../context/hooks/useConfig'
 import { EyeInvisibleOutlined, EyeTwoTone, PlusOutlined, LoadingOutlined } from '@ant-design/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FormI, ListI } from '../types'
+import { getFormValue } from '../../utils'
+import gotoSign from '../../service/sign'
+import { useNavigate } from 'react-router-dom'
 
 const formItemLayout = {
   labelCol: {
@@ -26,11 +31,14 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
   reader.readAsDataURL(img)
 }
 
-export default function SignPage () {
+export default function SignPage() {
   const { form, setForm } = useConfig()
   const [loading, setLoading] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>()
   const { t } = useTranslation()
+  const [status, setStatus] = useState(t('userRole'))
+  const [signForm, setSignForm] = useState(form)
+  const navigate = useNavigate()
 
   const onFinish = (values: unknown) => {
     console.log('Received values of form: ', values)
@@ -60,19 +68,58 @@ export default function SignPage () {
       });
     }
   }
+
+  const onSign = async () => {
+    const token_storage = sessionStorage.getItem('token')
+    const params = {
+      username: getFormValue(form, 'username'),
+      password: getFormValue(form, 'password'),
+      repassword: getFormValue(form, 'repassword'),
+      phone: getFormValue(form, 'phone'),
+      email: getFormValue(form, 'email'),
+      avatar: getFormValue(form, 'avatar'),
+      status: getFormValue(form, 'status'),
+      token: token_storage
+    }
+
+    const res = await gotoSign(params)
+    const { code, msg, data } = res
+    if (code) {
+      message.error(msg)
+    } else {
+      const { expiretime, token, username, avatar, role } = data
+      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('expiretime', expiretime)
+      sessionStorage.setItem('role', role)
+      message.success(msg)
+      onReset()
+    }
+  }
+
+  const onReset = () => {
+    const initForm = form.map((_form) => {
+      return {
+        ..._form,
+        value: ''
+      }
+    })
+
+    setSignForm(initForm)
+  }
+
   return (
     <>
       <div className='sign-wrap'>
         <div className='form-wrap'>
           <Form
-            name='normal_sign'
+            // key='normal_sign'
             className='sign-form'
             initialValues={{ remember: true }}
             onFinish={onFinish}
             {...formItemLayout}
           >
             {
-              form.map((formitem, fidx) => (
+              signForm.map((formitem, fidx) => (
                 formitem.show ? (
                   <Form.Item
                     key={`sign-form-${formitem.label}`}
@@ -83,6 +130,14 @@ export default function SignPage () {
                     hasFeedback={formitem.hasFeedback}
                     dependencies={formitem.dependencies}
                   >
+                    {
+                      formitem.type === 'status' && <Radio.Group
+                        options={[t('userRole')]}
+                        onChange={({ target: { value } }: RadioChangeEvent) => setStatus(value)}
+                        value={formitem.value | t('userRole')}
+                        optionType="button"
+                      />
+                    }
                     {
                       formitem.type === 'input' && <Input
                         type={formitem.type}
@@ -174,7 +229,7 @@ export default function SignPage () {
                           _form,
                           ...form.slice(fidx + 1)
                         ])
-                      }}/>
+                      }} />
                     }
 
                     {
@@ -196,7 +251,7 @@ export default function SignPage () {
                     }
 
                     {
-                      formitem.type === 'upload' &&  <Upload action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188' listType='picture-circle' name={formitem.label} showUploadList={false} onChange={handleChange} beforeUpload={beforeUpload}>
+                      formitem.type === 'upload' && <Upload action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188' listType='picture-circle' name={formitem.label} showUploadList={false} onChange={handleChange} beforeUpload={beforeUpload}>
                         {
                           imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : (
                             <button style={{ border: 0, background: 'none' }} type="button">
@@ -205,7 +260,7 @@ export default function SignPage () {
                             </button>
                           )
                         }
-                    </Upload>
+                      </Upload>
                     }
                   </Form.Item>
                 ) : <div></div>
@@ -213,19 +268,38 @@ export default function SignPage () {
             }
           </Form>
           <Form.Item>
-              <Row gutter={8}>
-                <Col span={12}>
-                  <Button type='primary' htmlType='submit' className='sign-form-button' block>
-                    {t('register')}
-                  </Button>
-                </Col>
-                <Col span={12}>
-                  <Button type='primary' htmlType='submit' className='sign-form-button' block>
-                    {t('reset')}
-                  </Button>
-                </Col>
-              </Row>
-            </Form.Item>
+            <Row gutter={8}>
+              <Col
+                span={8}
+                onClick={onSign}
+              >
+                <Button type='primary' htmlType='submit' className='sign-form-button' block>
+                  {t('register')}
+                </Button>
+              </Col>
+              <Col
+                span={8}
+                onClick={onReset}
+              >
+                <Button type='primary' htmlType='submit' className='sign-form-button' block>
+                  {t('reset')}
+                </Button>
+              </Col>
+              <Col
+                span={8}
+                onClick={onReset}
+              >
+                <Button type='primary' htmlType='submit' className='sign-form-button' block onClick={() => {
+                  sessionStorage.setItem('token', 'guider')
+                  sessionStorage.setItem('expiretime', Math.floor(Date.now() / 1000) + 18000)
+                  sessionStorage.setItem('role', 0)
+                  navigate('/chat')
+                }}>
+                  {t('guidergoin')}
+                </Button>
+              </Col>
+            </Row>
+          </Form.Item>
         </div>
       </div>
     </>

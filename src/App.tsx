@@ -6,7 +6,7 @@ import Sider from './pages/Sider'
 import { FloatButton } from 'antd'
 import { CustomerServiceOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import { Route, Routes, Navigate, useLocation } from 'react-router-dom'
+import { Route, Routes, Navigate, useLocation, Redirect } from 'react-router-dom'
 
 // router pages
 import ChatbotPage from "./pages/Chatbot"
@@ -22,22 +22,29 @@ import PrivacyPage from './pages/Privacy'
 import DestoryPage from './pages/Destory'
 import RecyclePage from './pages/Recycle'
 import FeedbackPage from './pages/Feedback'
+import TourPage from './pages/Tour'
 
 // lang config
 import dayjs from 'dayjs'
-import TourPage from './pages/Tour'
+import { isAuthenticated, isUserRole } from './service/auth';
 
 function App() {
   const [light, setLight] = useState(true)
   const [c, setC] = useState(true)
   const { i18n } = useTranslation()
   const location = useLocation()
+  const isUserAuthenticated = isAuthenticated()
+  const isUser = isUserRole()
 
   useEffect(() => {
     const lang = c ? 'zh' : 'en'
     i18n.changeLanguage(lang)
     dayjs.locale(c ? 'zh-cn' : 'en-US')
     dayjs.locale()
+
+    // 校验身份
+    console.log(isUserAuthenticated, isUser);
+    
   }, [c, i18n])
 
   return (
@@ -47,21 +54,27 @@ function App() {
           <div className={`app-content ${ !light ? 'dark' : 'light' }`}>
             <Sider switchTheme={(dark) => setLight(!dark)}/>
             <Routes>
-              <Route path="/chat" element={<ChatbotPage/>} />
+              {/* Public Routes */}
+              <Route path="/tour" element={<TourPage />} />
               <Route path="/calendar" element={<CalendarPage/>} />
-              <Route path="/note" element={<NotePage />} />
-              <Route path="/todo" element={<TodoPage />} />
-              <Route path="/timeline" element={<TimelinePage />} />
               <Route path="/link" element={<LinkPage />} />
               <Route path="/knowledge" element={<KnowledgePage />} />
-              <Route path="/feedback" element={<FeedbackPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/sign" element={<SignPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/destory" element={<DestoryPage />} />
-              <Route path="/recycle" element={<RecyclePage />} />
-              <Route path="/tour" element={<TourPage />} />
-              <Route index element={<Navigate to={location.pathname} />} />
+
+              { isUserAuthenticated && <Route path="/chat" element={<ChatbotPage />} /> }
+              { isUserAuthenticated && <Route path="/login" element={<LoginPage />} /> }
+              { isUserAuthenticated && <Route path="/sign" element={<SignPage />} /> }
+              { isUserAuthenticated && <Route index element={<Navigate to={location.pathname || '/sign'} />} /> }
+              { isUserAuthenticated && isUser && <Route path="/note" element={<NotePage />} />}
+              { isUserAuthenticated && isUser && <Route path="/todo" element={<TodoPage />} />}
+              { isUserAuthenticated && isUser && <Route path="/timeline" element={<TimelinePage />} />}
+              { isUserAuthenticated && isUser && <Route path="/note" element={<NotePage />} />}
+              { isUserAuthenticated && isUser && <Route path="/feedback" element={<FeedbackPage />} />}
+              { isUserAuthenticated && isUser && <Route path="/privacy" element={<PrivacyPage />} />}
+              { isUserAuthenticated && isUser && <Route path="/recycle" element={<RecyclePage />} />}
+              { isUserAuthenticated && isUser && <Route path="/destory" element={<DestoryPage />} />}
+
+              {/* Default Route */}
+              <Route index element={<Navigate to={location.pathname || '/chat'} />} />
             </Routes>
           </div>
           <div className='tools-wrap'>
@@ -90,3 +103,4 @@ function App() {
 }
 
 export default App
+

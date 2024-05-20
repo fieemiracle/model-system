@@ -39,7 +39,11 @@ const resources = {
       'reset': 'Reset Form',
       'modify': 'Modify Now',
       'log': 'Login Now',
-      'forget': 'Forget Password'
+      'forget': 'Forget Password',
+      'status': 'Select your status',
+      'userRole': 'common user',
+      'guiderRole': 'guider',
+      'guidergoin': 'Enter By Guider',
     }
   },
   zh: {
@@ -79,7 +83,11 @@ const resources = {
       'reset': '重置表单',
       'modify': '立即修改',
       'log': '立即登录',
-      'forget': '忘记密码'
+      'forget': '忘记密码',
+      'status': '选择你的身份',
+      'userRole': '普通用户',
+      'guiderRole': '游客',
+      'guidergoin': '通过游客身份进入'
     }
   }
 }
